@@ -1,9 +1,9 @@
 name: Deploy Frontend to AWS EC2
 
-on: workflow_dispatch
-  # push:
-  #   branches:
-  #     - main
+on:
+   push:
+     branches:
+       - main
 
 jobs:
   deploy:
@@ -23,7 +23,7 @@ jobs:
           script: |
             set -e
 
-            cd ~/Joms-Frontend
+            cd ~/githubactions-cicd-pipeline
 
             echo "Pulling latest code..."
             git fetch origin
