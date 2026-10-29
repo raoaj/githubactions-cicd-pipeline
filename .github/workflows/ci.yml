@@ -1,24 +1,69 @@
-name: CI Pipeline
+name: Deploy Frontend to AWS EC2
 
 on: workflow_dispatch
-#  push:
-#    branches: [ "main" ]
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
+  deploy:
+    runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Login Dockerhub
-      env:
-        DOCKER_USERNAME: ${{secrets.DOCKER_USERNAME}}
-        DOCKER_PASSWORD: ${{secrets.DOCKER_PASSWORD}}
-      run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-      
-    - name: Build the Docker image
-      run: docker build -t dockerforaravinda/cicd-pipeline .
-    - name: Push to Dockerhub
-      run: docker push dockerforaravinda/cicd-pipeline:latest
+      - name: Checkout Source
+        uses: actions/checkout@v4
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+
+          script: |
+            set -e
+
+            cd ~/Joms-Frontend
+
+            echo "Pulling latest code..."
+            git fetch origin
+            git reset --hard origin/main
+
+            echo "Creating env file..."
+            cat <<EOF > .env
+            ${{ secrets.ENV_FILE }}
+            EOF
+
+            echo "Building Docker image..."
+            docker build --no-cache -t joms-frontend-new .
+
+            echo "Stopping old container..."
+            docker stop joms-frontend || true
+            docker rm joms-frontend || true
+
+            echo "Starting new container..."
+
+            docker run -d \
+              --name joms-frontend \
+              -p 3000:80 \
+              --restart always \
+              joms-frontend-new
+
+            echo "Checking container..."
+
+            sleep 5
+
+            if ! docker ps | grep joms-frontend; then
+              echo "Container failed"
+              docker logs joms-frontend
+              exit 1
+            fi
+
+            echo "Testing frontend..."
+
+            curl -f http://localhost:3000
+
+            echo "Cleaning old images..."
+            docker image prune -f
+
+            echo "Deployment completed successfully"
