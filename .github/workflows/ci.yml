@@ -35,15 +35,15 @@ jobs:
             EOF
 
             echo "Building Docker image..."
-            docker build --no-cache -t joms-frontend-new .
+            sudo docker build --no-cache -t joms-frontend-new .
 
             echo "Stopping old container..."
-            docker stop joms-frontend || true
+            sudo docker stop joms-frontend || true
             docker rm joms-frontend || true
 
             echo "Starting new container..."
 
-            docker run -d \
+            sudo docker run -d \
               --name joms-frontend \
               -p 3000:80 \
               --restart always \
@@ -53,9 +53,9 @@ jobs:
 
             sleep 5
 
-            if ! docker ps | grep joms-frontend; then
+            if ! sudo docker ps | grep joms-frontend; then
               echo "Container failed"
-              docker logs joms-frontend
+             sudo  docker logs joms-frontend
               exit 1
             fi
 
