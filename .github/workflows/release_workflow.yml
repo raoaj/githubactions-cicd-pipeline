@@ -1,0 +1,26 @@
+name: Release Deployment Workflow
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    name: Deploy on Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Display release information
+        run: |
+          echo "Release published successfully!"
+          echo "Release Tag: ${{ github.event.release.tag_name }}"
+          echo "Release Name: ${{ github.event.release.name }}"
+
+      - name: Build application
+        run: |
+          echo "Building application..."
