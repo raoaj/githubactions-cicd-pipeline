@@ -9,3 +9,28 @@ jobs:
         run: echo " This is my first workflow"
       - name: Checking OS Release for LInux Github hosted env"
         run : cat /etc/os-release
+      - name: calling sleep
+        run: sleep 20  
+  job2:
+    name : job2
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking the name of the hostname
+        run: hostname
+      - name: Running Multiple commands
+        run : |
+         echo "Hi This is from arao"
+         echo "Current time is `date` "
+         sleep 20 
+  job3:
+    name: JOB3
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job with Single Dependency
+        run: sleep 10
+  job4:
+    name: JOB4
+    runs-on: ubuntu-latest
+    steps:
+      - name: Job for multiple dependencies
+        run: sleep 10         
