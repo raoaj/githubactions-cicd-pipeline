@@ -13,6 +13,7 @@ jobs:
         run: sleep 20  
   job2:
     name : job2
+    needs : job1
     runs-on: ubuntu-latest
     steps:
       - name: Checking the name of the hostname
@@ -24,12 +25,14 @@ jobs:
          sleep 20 
   job3:
     name: JOB3
+    needs: job2
     runs-on: ubuntu-latest
     steps:
       - name: Job with Single Dependency
         run: sleep 10
   job4:
     name: JOB4
+    needs : job3
     runs-on: ubuntu-latest
     steps:
       - name: Job for multiple dependencies
