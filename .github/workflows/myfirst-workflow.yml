@@ -20,7 +20,7 @@ jobs:
         run: hostname
       - name: Running Multiple commands
         run : |
-         echo "Hi This is from arao"
+         echo "Hi This is from arao changing label"
          echo "Current time is `date` "
          sleep 20 
   job3:
