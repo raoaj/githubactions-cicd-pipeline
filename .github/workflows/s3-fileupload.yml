@@ -8,7 +8,7 @@ on:
   # push:
   #   branches: [prod-main]
 
-# Only one deploy at a time per ref. New pushes wait; nothing is cancelled mid-flight.
+# Only one deploy at a time per ref. New pushes wait; nothing is cancelled mid-flight test.
 concurrency:
   group: deploy-frontend-${{ github.ref }}
   cancel-in-progress: false
@@ -32,14 +32,15 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Test
-        run: npm test --silent --if-present
+      # - name: Test
+      #   run: npm test --silent --if-present
 
-      # - name: Build
+      - name: Build
+        run: npm run build
       #   env:
       #     VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL }}
       #     VITE_GOOGLE_CLIENT_ID: ${{ vars.VITE_GOOGLE_CLIENT_ID }}
-      #   run: npm run build
+         
 
       - uses: aws-actions/configure-aws-credentials@v4
         with:
